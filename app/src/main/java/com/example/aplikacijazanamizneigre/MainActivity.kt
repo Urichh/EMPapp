@@ -17,12 +17,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import android.content.Intent
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 
 
 
@@ -98,14 +102,39 @@ fun HomeScreen(
 
 @Composable
 fun IskanjeScreen() {
+    val namizneIgre = listOf("Catan", "Carcassonne", "Ticket to Ride", "Pandemic", "Chess")
+    val query = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Iskanje")
+        TextField(
+            value = query.value,
+            onValueChange = { query.value = it },
+            label = { Text("Brskaj po igrah") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+
+        val filteredGames = namizneIgre.filter {
+            it.contains(query.value, ignoreCase = true)
+        }
+
+        if (filteredGames.isEmpty()) {
+            Text("nobena igra ne ustreza kriterijem")
+        } else {
+            filteredGames.forEach { game ->
+                Text(
+                    text = game,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
+        }
     }
 }
 
