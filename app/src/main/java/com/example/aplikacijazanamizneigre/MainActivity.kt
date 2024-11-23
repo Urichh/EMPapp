@@ -141,7 +141,7 @@ fun IskanjeScreen() {
         TextField(
             value = igraQuery.value,
             onValueChange = { igraQuery.value = it },
-            label = { Text("igra") },
+            label = { Text("Igra") },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
@@ -155,21 +155,21 @@ fun IskanjeScreen() {
 
         //vnos: zanr
         DropdownMenuZNapisom(
-            label = "zanr",
+            label = "Žanr",
             options = zanri,
             selectedOption = izbranZanr
         )
 
         //vnos: zahtevnost
         DropdownMenuZNapisom(
-            label = "zahtevnost",
+            label = "Zahtevnost",
             options = tezavnosti,
             selectedOption = izbranaZahtevnost
         )
 
         //vnos: stevilo igrlcev
         DropdownMenuZNapisom(
-            label = "Stevilo igralcev",
+            label = "Število igralcev",
             options = steviloIgralcevs,
             selectedOption = izbranoStIgralcev
         )
@@ -177,19 +177,19 @@ fun IskanjeScreen() {
         Button(
             onClick = {
                 rezultatiIskanja.value = igre.filter { igra ->
-                    (igraQuery.value.isEmpty() || igra.igra.contains(
-                        igraQuery.value,
+                    (igraQuery.value.isEmpty() || igra.igra.lowercase().contains(
+                        igraQuery.value.lowercase(),
                         ignoreCase = true
                     )) &&
                             (cenaQuery.value.isEmpty() || igra.cena <= (cenaQuery.value.toDoubleOrNull() ?: Double.MAX_VALUE)) &&
-                            (izbranZanr.value == "All" || izbranZanr.value == igra.zanr) &&
-                            (izbranaZahtevnost.value == "All" || izbranaZahtevnost.value == igra.zahtevnost) &&
-                            (izbranoStIgralcev.value == "All" || izbranoStIgralcev.value.toIntOrNull() == igra.steviloIgralcev)
+                            (izbranZanr.value == "Vse" || izbranZanr.value == igra.zanr) &&
+                            (izbranaZahtevnost.value == "Vse" || izbranaZahtevnost.value == igra.zahtevnost) &&
+                            (izbranoStIgralcev.value == "Vse" || izbranoStIgralcev.value.toIntOrNull() == igra.steviloIgralcev)
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
         ) {
-            Text("Isci")
+            Text("Išči")
         }
 
         // Search results
