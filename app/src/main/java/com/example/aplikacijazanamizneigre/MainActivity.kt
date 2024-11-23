@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.graphics.Color
 
 
 class MainActivity : ComponentActivity() {
@@ -86,8 +88,8 @@ fun BackgroundShapes() {
             .background(
                 brush = androidx.compose.ui.graphics.Brush.verticalGradient(
                     colors = listOf(
-                        androidx.compose.ui.graphics.Color.Blue.copy(alpha = 0.8f),
-                        androidx.compose.ui.graphics.Color.Cyan
+                        Color.Blue.copy(alpha = 0.8f),
+                        Color.Cyan
                     )
                 )
             )
@@ -174,12 +176,25 @@ fun IskanjeScreen() {
 fun DropdownMenuZNapisom(label: String, options: List<String>, izbrana: MutableState<String>) {
     val razsirjen = remember { mutableStateOf(false) }
 
+    //barve
+    val barve = TextFieldDefaults.colors(
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        focusedTextColor = Color.Black,
+        unfocusedTextColor = Color.DarkGray,
+        focusedIndicatorColor = Color.Black,
+        unfocusedIndicatorColor = Color.Black,
+        focusedLabelColor = Color.Black,
+        unfocusedLabelColor = Color.Black
+    )
+
     Column(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = izbrana.value.ifEmpty { label },
             onValueChange = { },
             readOnly = true,
             label = { Text(label) },
+
             trailingIcon = {
                 Icon(
                     imageVector = if (razsirjen.value) {
@@ -194,6 +209,7 @@ fun DropdownMenuZNapisom(label: String, options: List<String>, izbrana: MutableS
                     }
                 )
             },
+            colors = barve,
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { razsirjen.value = !razsirjen.value }
@@ -270,7 +286,17 @@ fun PriporocilaScreen() {
             value = cenaQuery.value,
             onValueChange = { cenaQuery.value = it },
             label = { Text("Max cena") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedIndicatorColor = Color.Gray,
+                unfocusedIndicatorColor = Color.LightGray,
+                focusedLabelColor = Color.Gray,
+                unfocusedLabelColor = Color.DarkGray
+            )
         )
 
         //dropdown: zanr
