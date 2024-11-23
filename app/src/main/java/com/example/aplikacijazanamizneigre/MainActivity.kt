@@ -101,34 +101,10 @@ fun HomeScreen(
 
 @Composable
 fun IskanjeScreen() {
-    data class BoardGame(
-        val igra: String,
-        val zanr: String,
-        val zahtevnost: String,
-        val steviloIgralcev: Int,
-        val cena: Double
-    )
-
-    //staticne igre (za enkrat)
-    val igre = listOf(
-        BoardGame("Catan", "Strategija", "Srednja", 4, 35.0),
-        BoardGame("Carcassonne", "Postavitev polj", "Lahka", 5, 30.0),
-        BoardGame("Ticket to Ride", "Strategija", "Lahka", 5, 40.0),
-        BoardGame("Pandemic", "Sodelujoca", "Tezka", 4, 50.0),
-        BoardGame("Šah", "Abstraktna", "Tezka", 2, 20.0)
-    )
-
     val igraQuery = remember { mutableStateOf("") }
-    val cenaQuery = remember { mutableStateOf("") }
-    val izbranZanr = remember { mutableStateOf("") }
-    val izbranaZahtevnost = remember { mutableStateOf("") }
-    val izbranoStIgralcev = remember { mutableStateOf("") }
-    val rezultatiIskanja = remember { mutableStateOf(emptyList<BoardGame>()) }
+    val rezultatiIskanja = remember { mutableStateOf(emptyList<String>()) }
 
-    //Moznosti za dropdown menu
-    val zanri = listOf("Vse", "Strategija", "Postavitev polj", "Sodelujoca", "Abstraktna")
-    val tezavnosti = listOf("Vse", "Lahka", "Srednja", "Tezka")
-    val steviloIgralcevs = listOf("Vse", "2", "4", "5")
+    val igre = listOf("Catan", "Carcassonne", "Ticket to Ride", "Pandemic", "Šah")
 
     Column(
         modifier = Modifier
@@ -137,7 +113,7 @@ fun IskanjeScreen() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        //vnos: igra
+
         TextField(
             value = igraQuery.value,
             onValueChange = { igraQuery.value = it },
@@ -145,46 +121,10 @@ fun IskanjeScreen() {
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        //vnos: cena
-        TextField(
-            value = cenaQuery.value,
-            onValueChange = { cenaQuery.value = it },
-            label = { Text("Max cena") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-        )
-
-        //vnos: zanr
-        DropdownMenuZNapisom(
-            label = "Žanr",
-            options = zanri,
-            selectedOption = izbranZanr
-        )
-
-        //vnos: zahtevnost
-        DropdownMenuZNapisom(
-            label = "Zahtevnost",
-            options = tezavnosti,
-            selectedOption = izbranaZahtevnost
-        )
-
-        //vnos: stevilo igrlcev
-        DropdownMenuZNapisom(
-            label = "Število igralcev",
-            options = steviloIgralcevs,
-            selectedOption = izbranoStIgralcev
-        )
-
         Button(
             onClick = {
                 rezultatiIskanja.value = igre.filter { igra ->
-                    (igraQuery.value.isEmpty() || igra.igra.lowercase().contains(
-                        igraQuery.value.lowercase(),
-                        ignoreCase = true
-                    )) &&
-                            (cenaQuery.value.isEmpty() || igra.cena <= (cenaQuery.value.toDoubleOrNull() ?: Double.MAX_VALUE)) &&
-                            (izbranZanr.value == "Vse" || izbranZanr.value == igra.zanr) &&
-                            (izbranaZahtevnost.value == "Vse" || izbranaZahtevnost.value == igra.zahtevnost) &&
-                            (izbranoStIgralcev.value == "Vse" || izbranoStIgralcev.value.toIntOrNull() == igra.steviloIgralcev)
+                    igra.lowercase().contains(igraQuery.value.lowercase(), ignoreCase = true)
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
@@ -192,13 +132,12 @@ fun IskanjeScreen() {
             Text("Išči")
         }
 
-        // Search results
         if (rezultatiIskanja.value.isEmpty()) {
             Text("0 najdenih iger", modifier = Modifier.padding(top = 16.dp))
         } else {
             rezultatiIskanja.value.forEach { game ->
                 Text(
-                    text = "${game.igra} - ${game.zanr} - ${game.zahtevnost} - ${game.steviloIgralcev} players - \$${game.cena}",
+                    text = game,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
@@ -252,13 +191,93 @@ fun SeznamZeljaScreen() {
 
 @Composable
 fun PriporocilaScreen() {
+    data class NamiznaIgra(
+        val igra: String,
+        val zanr: String,
+        val zahtevnost: String,
+        val steviloIgralcev: Int,
+        val cena: Double
+    )
+
+    //trenutno staticni seznam iger
+    val igre = listOf(
+        NamiznaIgra("Catan", "Strategija", "Srednja", 4, 35.0),
+        NamiznaIgra("Carcassonne", "Postavitev polj", "Lahka", 5, 30.0),
+        NamiznaIgra("Ticket to Ride", "Strategija", "Lahka", 5, 40.0),
+        NamiznaIgra("Pandemic", "Sodelujoca", "Tezka", 4, 50.0),
+        NamiznaIgra("Šah", "Abstraktna", "Tezka", 2, 20.0)
+    )
+
+    val cenaQuery = remember { mutableStateOf("") }
+    val izbranZanr = remember { mutableStateOf("") }
+    val izbranaZahtevnost = remember { mutableStateOf("") }
+    val izbranoStIgralcev = remember { mutableStateOf("") }
+    val rezultatiIskanja = remember { mutableStateOf(emptyList<NamiznaIgra>()) }
+
+    // Dropdown menu options
+    val zanri = listOf("Vse", "Strategija", "Postavitev polj", "Sodelujoca", "Abstraktna")
+    val tezavnosti = listOf("Vse", "Lahka", "Srednja", "Tezka")
+    val steviloIgralcevs = listOf("Vse", "2", "4", "5")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
     ) {
-        Text("Priporočila")
+        //Vnos: max cena
+        TextField(
+            value = cenaQuery.value,
+            onValueChange = { cenaQuery.value = it },
+            label = { Text("Max cena") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )
+
+        //dropdown: zanr
+        DropdownMenuZNapisom(
+            label = "Žanr",
+            options = zanri,
+            selectedOption = izbranZanr
+        )
+
+        //dropdown: zahtevnost
+        DropdownMenuZNapisom(
+            label = "Zahtevnost",
+            options = tezavnosti,
+            selectedOption = izbranaZahtevnost
+        )
+
+        //dropdown: max. st. igralcev
+        DropdownMenuZNapisom(
+            label = "Število igralcev",
+            options = steviloIgralcevs,
+            selectedOption = izbranoStIgralcev
+        )
+
+        Button(
+            onClick = {
+                rezultatiIskanja.value = igre.filter { igra ->
+                    (cenaQuery.value.isEmpty() || igra.cena <= (cenaQuery.value.toDoubleOrNull() ?: Double.MAX_VALUE)) &&
+                            (izbranZanr.value == "Vse" || izbranZanr.value == igra.zanr) &&
+                            (izbranaZahtevnost.value == "Vse" || izbranaZahtevnost.value == igra.zahtevnost) &&
+                            (izbranoStIgralcev.value == "Vse" || izbranoStIgralcev.value.toIntOrNull() == igra.steviloIgralcev)
+                }
+            },
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+        ){ Text("Išči") }
+
+        //filtriraj po rezultatih
+        if (rezultatiIskanja.value.isEmpty()) {
+            Text("0 najdenih iger", modifier = Modifier.padding(top = 16.dp))
+        }
+        else{
+            rezultatiIskanja.value.forEach { game ->
+                Text(
+                    text = "${game.igra} - Žanr: ${game.zanr} - Zahtevnost: ${game.zahtevnost} - Max. St. Igralcev: ${game.steviloIgralcev} - \$${game.cena}",
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
+        }
     }
 }
