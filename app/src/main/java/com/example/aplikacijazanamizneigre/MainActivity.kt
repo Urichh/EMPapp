@@ -3,6 +3,8 @@ package com.example.aplikacijazanamizneigre
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -12,10 +14,11 @@ import com.example.aplikacijazanamizneigre.ui.theme.AplikacijaZaNamizneIGreTheme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,7 +29,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
-
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 
 
 class MainActivity : ComponentActivity() {
@@ -45,28 +49,49 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     appViewModel: AppViewModel = viewModel()
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = "home"
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        composable("home") {
-            HomeScreen(
-                onNavigateToIskanje = { navController.navigate("iskanje") },
-                onNavigateToSeznamZelja = { navController.navigate("seznamZelja") },
-                onNavigateToPriporocila = { navController.navigate("priporocila") },
-                viewModel = appViewModel
-            )
-        }
-        composable("iskanje") {
-            IskanjeScreen()
-        }
-        composable("seznamZelja") {
-            SeznamZeljaScreen()
-        }
-        composable("priporocila") {
-            PriporocilaScreen()
+        BackgroundShapes()
+        NavHost(
+            navController = navController,
+            startDestination = "home"
+        ) {
+            composable("home") {
+                HomeScreen(
+                    onNavigateToIskanje = { navController.navigate("iskanje") },
+                    onNavigateToSeznamZelja = { navController.navigate("seznamZelja") },
+                    onNavigateToPriporocila = { navController.navigate("priporocila") },
+                    viewModel = appViewModel
+                )
+            }
+            composable("iskanje") {
+                IskanjeScreen()
+            }
+            composable("seznamZelja") {
+                SeznamZeljaScreen()
+            }
+            composable("priporocila") {
+                PriporocilaScreen()
+            }
         }
     }
+}
+
+@Composable
+fun BackgroundShapes() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                    colors = listOf(
+                        androidx.compose.ui.graphics.Color.Blue.copy(alpha = 0.8f),
+                        androidx.compose.ui.graphics.Color.Cyan
+                    )
+                )
+            )
+    )
 }
 
 @Composable
@@ -146,28 +171,42 @@ fun IskanjeScreen() {
 }
 
 @Composable
-fun DropdownMenuZNapisom(label: String, options: List<String>, selectedOption: MutableState<String>) {
-    val expanded = remember { mutableStateOf(false) }
+fun DropdownMenuZNapisom(label: String, options: List<String>, izbrana: MutableState<String>) {
+    val razsirjen = remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-    ) {
-        //za odpret okno
-        TextButton(onClick = { expanded.value = true }) {
-            Text(text = selectedOption.value.ifEmpty { label })
-        }
-
+    Column(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = izbrana.value.ifEmpty { label },
+            onValueChange = { },
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = {
+                Icon(
+                    imageVector = if (razsirjen.value) {
+                        androidx.compose.material.icons.Icons.Filled.KeyboardArrowUp
+                    }
+                    else{
+                        androidx.compose.material.icons.Icons.Filled.KeyboardArrowDown
+                    },
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        razsirjen.value = !razsirjen.value
+                    }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { razsirjen.value = !razsirjen.value }
+        )
         DropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false }
+            expanded = razsirjen.value,
+            onDismissRequest = { razsirjen.value = false }
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedOption.value = option
-                        expanded.value = false
+                        izbrana.value = option
+                        razsirjen.value = false
                     },
                     text = { Text(option) }
                 )
@@ -214,7 +253,7 @@ fun PriporocilaScreen() {
     val izbranoStIgralcev = remember { mutableStateOf("") }
     val rezultatiIskanja = remember { mutableStateOf(emptyList<NamiznaIgra>()) }
 
-    // Dropdown menu options
+    // Dropdown menu moznosti
     val zanri = listOf("Vse", "Strategija", "Postavitev polj", "Sodelujoca", "Abstraktna")
     val tezavnosti = listOf("Vse", "Lahka", "Srednja", "Tezka")
     val steviloIgralcevs = listOf("Vse", "2", "4", "5")
@@ -238,21 +277,21 @@ fun PriporocilaScreen() {
         DropdownMenuZNapisom(
             label = "Žanr",
             options = zanri,
-            selectedOption = izbranZanr
+            izbrana = izbranZanr
         )
 
         //dropdown: zahtevnost
         DropdownMenuZNapisom(
             label = "Zahtevnost",
             options = tezavnosti,
-            selectedOption = izbranaZahtevnost
+            izbrana = izbranaZahtevnost
         )
 
         //dropdown: max. st. igralcev
         DropdownMenuZNapisom(
             label = "Število igralcev",
             options = steviloIgralcevs,
-            selectedOption = izbranoStIgralcev
+            izbrana = izbranoStIgralcev
         )
 
         Button(
