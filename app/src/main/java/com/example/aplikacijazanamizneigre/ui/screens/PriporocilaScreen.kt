@@ -20,11 +20,11 @@ fun PriporocilaScreen() {
 
     //hardcodane igre
     val igre = listOf(
-        NamiznaIgra("Catan", "Strategija", "Srednja", 4, 35.0),
-        NamiznaIgra("Carcassonne", "Postavitev polj", "Lahka", 5, 30.0),
-        NamiznaIgra("Ticket to Ride", "Strategija", "Lahka", 5, 40.0),
-        NamiznaIgra("Pandemic", "Sodelujoca", "Tezka", 4, 50.0),
-        NamiznaIgra("Šah", "Abstraktna", "Tezka", 2, 20.0)
+        NamiznaIgra(0, "Catan", "Strategija", "Srednja", 35.0, 2, 4, "igra Catan", "https://www.igraj.si/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NjQ2LCJwdXIiOiJibG9iX2lkIn19--b00d8ed3c7715c5aea19a8b9c397775a5dbcb721/CATAN.jpg"),
+        NamiznaIgra(1, "Carcassonne", "Postavitev polj", "Lahka", 50.0, 3, 6, "whatever", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8_eW_ICMVsVuZiR-gvQMpJ84qnL64_fLNMQ&s"),
+        //NamiznaIgra(2, "Ticket to Ride", "Strategija", "Lahka", 5, 40.0),
+        //NamiznaIgra(3, "Pandemic", "Sodelujoca", "Tezka", 4, 50.0),
+        //NamiznaIgra(4, "Šah", "Abstraktna", "Tezka", 2, 20.0),
     )
 
     val cenaQuery = remember { mutableStateOf("") }
@@ -86,7 +86,7 @@ fun PriporocilaScreen() {
                     (cenaQuery.value.isEmpty() || igra.cena <= (cenaQuery.value.toDoubleOrNull() ?: Double.MAX_VALUE)) &&
                             (izbranZanr.value == "Vse" || izbranZanr.value == igra.zanr) &&
                             (izbranaZahtevnost.value == "Vse" || izbranaZahtevnost.value == igra.zahtevnost) &&
-                            (izbranoStIgralcev.value == "Vse" || izbranoStIgralcev.value.toIntOrNull() == igra.steviloIgralcev)
+                            (izbranoStIgralcev.value == "Vse" || izbranoStIgralcev.value.toInt() <= igra.maxIgralcev)
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
@@ -99,7 +99,7 @@ fun PriporocilaScreen() {
         } else {
             rezultatiIskanja.value.forEach { game ->
                 Text(
-                    text = "${game.igra} - Žanr: ${game.zanr} - Zahtevnost: ${game.zahtevnost} - Max. St. Igralcev: ${game.steviloIgralcev} - \$${game.cena}",
+                    text = "${game.igra} - Žanr: ${game.zanr} - Zahtevnost: ${game.zahtevnost} - Max. St. Igralcev: ${game.maxIgralcev} - \$${game.cena}",
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
