@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.aplikacijazanamizneigre.ui.WishlistScreen
 
 @Composable
 fun AppNavHost(
@@ -30,7 +31,7 @@ fun AppNavHost(
                 IskanjeScreen()
             }
             composable("seznamZelja") {
-                SeznamZeljaScreen()
+                WishlistScreen()
             }
             composable("priporocila") {
                 PriporocilaScreen()
