@@ -1,4 +1,4 @@
-package com.example.aplikacijazanamizneigre.ui
+package com.example.aplikacijazanamizneigre.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,46 +11,47 @@ import com.example.aplikacijazanamizneigre.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WishlistScreen(appViewModel: AppViewModel = viewModel()) {
-    val gamesList by appViewModel.allGames.collectAsStateWithLifecycle(initialValue = emptyList())
-    var selectedGame by remember { mutableStateOf<String?>(null) }
-    var dropdownExpanded by remember { mutableStateOf(false) }
+fun SeznamZeljaScreen(appViewModel: AppViewModel = viewModel()) {
+    val seznamIger by appViewModel.vseIgre.collectAsStateWithLifecycle(initialValue = emptyList())
+    val seznamZelijZImenom by appViewModel.zeljeneIgreZImenom.collectAsStateWithLifecycle(initialValue = emptyList())
+
+    var izbranaIgra by remember { mutableStateOf<String?>(null) }
+    var dropdownRazsirjen by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Add to Wishlist", style = MaterialTheme.typography.bodyMedium)
+        Text(text = "Seznam želja", style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Dropdown menu for selecting a game
         ExposedDropdownMenuBox(
-            expanded = dropdownExpanded,
-            onExpandedChange = { dropdownExpanded = !dropdownExpanded }
+            expanded = dropdownRazsirjen,
+            onExpandedChange = { dropdownRazsirjen = !dropdownRazsirjen }
         ) {
             TextField(
-                value = selectedGame ?: "",
+                value = izbranaIgra ?: "",
                 onValueChange = {},
                 label = { Text("Select Board Game") },
                 trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded)
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownRazsirjen)
                 },
                 readOnly = true,
                 modifier = Modifier.menuAnchor()
             )
 
             ExposedDropdownMenu(
-                expanded = dropdownExpanded,
-                onDismissRequest = { dropdownExpanded = false }
+                expanded = dropdownRazsirjen,
+                onDismissRequest = { dropdownRazsirjen = false }
             ) {
-                gamesList.forEach { game ->
+                seznamIger.forEach { game ->
                     DropdownMenuItem(
                         text = { Text(text = game.igra) },
                         onClick = {
-                            selectedGame = game.igra
-                            dropdownExpanded = false
+                            izbranaIgra = game.igra
+                            dropdownRazsirjen = false
                         }
                     )
                 }
@@ -59,19 +60,43 @@ fun WishlistScreen(appViewModel: AppViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Add to wishlist button
         Button(
             onClick = {
-                selectedGame?.let { gameName ->
-                    val game = gamesList.find { it.igra == gameName }
+                izbranaIgra?.let { gameName ->
+                    val game = seznamIger.find { it.igra == gameName }
                     game?.let {
-                        appViewModel.addGameToWishlist(it.id)
+                        appViewModel.dodajIgroNaSeznamZelja(it.id)
                     }
                 }
             },
-            enabled = selectedGame != null
+            enabled = izbranaIgra != null
         ) {
-            Text("Add to Wishlist")
+            Text("Dodaj")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display wishlist games with names
+        Text(text = "Seznam:", style = MaterialTheme.typography.bodyMedium)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        seznamZelijZImenom.forEach { (wishlistItem, gameName) ->
+            Text(
+                text = "$gameName - Added on: ${wishlistItem.dodanDatum}",
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Clear wishlist button
+        Button(
+            onClick = {
+                appViewModel.izprazniZelje()
+            }
+        ) {
+            Text("Izprazni seznam želja")
         }
     }
 }

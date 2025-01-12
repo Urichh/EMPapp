@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SeznamZeljaDAO {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun dodajZeljo(entry: SeznamZelja)
 
     @Query("SELECT * FROM seznam_zelja")

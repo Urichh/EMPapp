@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.aplikacijazanamizneigre.data.AppDatabase
 import com.example.aplikacijazanamizneigre.data.dao.NamiznaIgraDAO
 import com.example.aplikacijazanamizneigre.data.dao.SeznamZeljaDAO
-import com.example.aplikacijazanamizneigre.data.models.NamiznaIgra
 import com.example.aplikacijazanamizneigre.data.models.SeznamZelja
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -19,48 +19,46 @@ import java.util.Locale
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val gameDao: NamiznaIgraDAO = AppDatabase.getDatabase(application).gameDao()
-    private val wishlistDao: SeznamZeljaDAO = AppDatabase.getDatabase(application).wishlistDao()
+    private val igreDAO: NamiznaIgraDAO = AppDatabase.getDatabase(application).gameDao()
+    private val zeljeDAO: SeznamZeljaDAO = AppDatabase.getDatabase(application).wishlistDao()
 
-    val allGames = gameDao.getIgre().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val vseIgre = igreDAO.getIgre().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val zeljeneIgre = zeljeDAO.getZelje().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val zeljeneIgreZImenom = zeljeneIgre.map { wishlistItems ->
+        wishlistItems.mapNotNull { wishlistItem ->
+            val kaj = igreDAO.getIgraById(wishlistItem.idIgre)
+            kaj?.let {
+                wishlistItem to it.igra
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
         viewModelScope.launch {
-            val games = gameDao.getIgre().first()
-            Log.d("AppViewModel", "Games in DB: $games")
-
-            if (games.isEmpty()) {
-                seedDatabase()
-            }
+            val games = igreDAO.getIgre().first()
+            Log.d("AppViewModel", "igre u db: $games")
         }
     }
 
-    private fun seedDatabase() {
+    fun dodajIgroNaSeznamZelja(gameId: Int) {
         viewModelScope.launch {
-            val predefinedGames = listOf(
-                NamiznaIgra(0, "Catan", "Strategija", "Srednja", 35.0, 2, 4, "igra Catan", "https://www.igraj.si/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NjQ2LCJwdXIiOiJibG9iX2lkIn19--b00d8ed3c7715c5aea19a8b9c397775a5dbcb721/CATAN.jpg"),
-                NamiznaIgra(0, "Carcassonne", "Postavitev polj", "Lahka", 50.0, 3, 6, "whatever", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8_eW_ICMVsVuZiR-gvQMpJ84qnL64_fLNMQ&s")
-            )
-            predefinedGames.forEach { game ->
-                gameDao.dodajIgro(game)
-            }
-            Log.d("AppViewModel", "Database seeded with games: $predefinedGames")
-        }
-    }
-
-    // Add game to wishlist
-    fun addGameToWishlist(gameId: Int) {
-        viewModelScope.launch {
-            val game = gameDao.getIgraById(gameId)
+            val game = igreDAO.getIgraById(gameId)
             if (game != null) {
                 val seznamZelja = SeznamZelja(idIgre = game.id, dodanDatum = getCurrentDate())
-                wishlistDao.dodajZeljo(seznamZelja)
+                zeljeDAO.dodajZeljo(seznamZelja)
             }
         }
     }
 
     private fun getCurrentDate(): String {
-        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         return currentDate.format(Date())
+    }
+
+    fun izprazniZelje() {
+        viewModelScope.launch {
+            zeljeDAO.izprazniZelje()
+        }
     }
 }

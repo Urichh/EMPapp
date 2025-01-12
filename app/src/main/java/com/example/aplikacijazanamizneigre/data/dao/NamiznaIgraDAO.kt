@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NamiznaIgraDAO {
-
+    //ce bojo duplikati problem zamenaj strategy.replace
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun dodajIgro(game: NamiznaIgra)
 
