@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "namizne_igre")
 data class NamiznaIgra(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val igra: String,
     val zanr: String,
     val zahtevnost: String,
