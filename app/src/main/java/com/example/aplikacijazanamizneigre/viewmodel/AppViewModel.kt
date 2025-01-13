@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.aplikacijazanamizneigre.data.AppDatabase
 import com.example.aplikacijazanamizneigre.data.dao.NamiznaIgraDAO
 import com.example.aplikacijazanamizneigre.data.dao.SeznamZeljaDAO
+import com.example.aplikacijazanamizneigre.data.models.NamiznaIgra
 import com.example.aplikacijazanamizneigre.data.models.SeznamZelja
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -60,5 +61,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             zeljeDAO.izprazniZelje()
         }
+    }
+    suspend fun getGameById(gameId: Int): NamiznaIgra? {
+        return igreDAO.getIgraById(gameId)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.aplikacijazanamizneigre.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -13,10 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.aplikacijazanamizneigre.ui.components.DropdownMenuZNapisom
 
 @Composable
-fun PriporocilaScreen(appViewModel: com.example.aplikacijazanamizneigre.viewmodel.AppViewModel) {
+fun PriporocilaScreen(
+    navController: NavHostController,
+    appViewModel: com.example.aplikacijazanamizneigre.viewmodel.AppViewModel
+) {
     val seznamIger = appViewModel.vseIgre.collectAsState(initial = emptyList()).value
 
     val cenaQuery = remember { mutableStateOf("") }
@@ -36,22 +41,17 @@ fun PriporocilaScreen(appViewModel: com.example.aplikacijazanamizneigre.viewmode
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        TextField(
-            value = cenaQuery.value,
-            onValueChange = { cenaQuery.value = it },
-            label = { Text("Max cena") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedIndicatorColor = Color.Gray,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedLabelColor = Color.Gray,
-                unfocusedLabelColor = Color.DarkGray
+        seznamIger.forEach { game ->
+            Text(
+                text = game.igra,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        navController.navigate("detajli/${game.id}")
+                    }
             )
-        )
+        }
 
         DropdownMenuZNapisom(
             label = "Žanr",
@@ -97,4 +97,3 @@ fun PriporocilaScreen(appViewModel: com.example.aplikacijazanamizneigre.viewmode
         }
     }
 }
-
