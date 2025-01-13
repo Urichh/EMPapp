@@ -76,21 +76,18 @@ fun SeznamZeljaScreen(appViewModel: AppViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Display wishlist games with names
         Text(text = "Seznam:", style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(8.dp))
 
         seznamZelijZImenom.forEach { (wishlistItem, gameName) ->
             Text(
-                text = "$gameName - Added on: ${wishlistItem.dodanDatum}",
+                text = "$gameName - dodan dne: ${wishlistItem.dodanDatum}",
                 modifier = Modifier.padding(vertical = 4.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Clear wishlist button
         Button(
             onClick = {
                 appViewModel.izprazniZelje()

@@ -21,7 +21,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Dobrodošli!", modifier = Modifier.padding(bottom = 24.dp))
+        Text(text = "Dobrodošli v Igralku!", modifier = Modifier.padding(bottom = 24.dp))
 
         Button(onClick = onNavigateToIskanje, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Text("Iskanje")
