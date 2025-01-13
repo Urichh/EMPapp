@@ -50,7 +50,11 @@ fun IgraDetajliScreen(igra: NamiznaIgra) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val painter = rememberAsyncImagePainter(igra.slikaURL)
         Image(
@@ -63,13 +67,24 @@ fun IgraDetajliScreen(igra: NamiznaIgra) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = " ${igra.igra} ", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Žanr: ${igra.zanr}")
-        Text(text = "Zahtevnost: ${igra.zahtevnost}")
-        Text(text = "Min igralci: ${igra.maxIgralcev}")
-        Text(text = "Max igralci: ${igra.maxIgralcev}")
-        Text(text = "Cena: $${igra.cena}")
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = " ${igra.igra} ",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Žanr: ${igra.zanr}")
+                Text(text = "Zahtevnost: ${igra.zahtevnost}")
+                Text(text = "Min igralci: ${igra.maxIgralcev}")
+                Text(text = "Max igralci: ${igra.maxIgralcev}")
+                Text(text = "Cena: $${igra.cena}")
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -77,18 +92,21 @@ fun IgraDetajliScreen(igra: NamiznaIgra) {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Trgovine z igrami v radiusu 5km:")
             bliznjeTrgovine.forEach { trgovina ->
-                Text(
-                    text = "${trgovina.name}; Koordinate: (${trgovina.lat}, ${trgovina.lon})",
-                    modifier = Modifier.clickable {
-                        odpriVGmaps(context, trgovina.lat, trgovina.lon)
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                Column {
+                    Text(
+                        text = "${trgovina.name}; Koordinate: (${trgovina.lat}, ${trgovina.lon})",
+                        modifier = Modifier
+                            .clickable {
+                                odpriVGmaps(context, trgovina.lat, trgovina.lon)
+                            }
+                            .padding(8.dp)
+                    )
+                    HorizontalDivider()
+                }
             }
         } else {
             Log.d("Trgovine", "0 najdenih bližnjih trgovin")
         }
-
     }
 }
 
@@ -121,7 +139,6 @@ private fun getLocation(context: android.content.Context, callback: (LatLng?) ->
 }
 
 private fun poisciBliznjeTrgovine(latitude: Double, longitude: Double, callback: (List<Store>) -> Unit) {
-    //iščem po keywoardu "games", kar ne prinese prav veliko rezultatov. Nisem našel dobrega načina za iskanje sorodnih ustanov
     val apiUrl = "https://nominatim.openstreetmap.org/search?q=games&lat=$latitude&lon=$longitude&format=json&radius=50000&countrycodes=SI"
 
     val client = OkHttpClient()
@@ -160,7 +177,6 @@ private fun parseJsonResponse(jsonResponse: String, callback: (List<Store>) -> U
     callback(stores)
 }
 
-//začasno
 data class Store(
     val name: String,
     val lat: String,
@@ -178,4 +194,3 @@ private fun odpriVGmaps(context: android.content.Context, lat: String, lon: Stri
         Log.e("Maps", "Google Maps ni nameščen")
     }
 }
-
