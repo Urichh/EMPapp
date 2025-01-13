@@ -6,20 +6,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.aplikacijazanamizneigre.viewmodel.AppViewModel
 
 @Composable
-fun IskanjeScreen(navController: NavHostController) {
+fun IskanjeScreen(navController: NavHostController, appViewModel: AppViewModel) {
     val igraQuery = remember { mutableStateOf("") }
-    val rezultatiIskanja = remember { mutableStateOf(emptyList<String>()) }
-
-    val igre = listOf("Catan", "Carcassonne", "Ticket to Ride", "Pandemic", "Šah")
+    val rezultatiIskanja = appViewModel.rezultatiIskanja.collectAsState(emptyList())
 
     Column(
         modifier = Modifier
@@ -28,21 +27,22 @@ fun IskanjeScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-
         TextField(
             value = igraQuery.value,
             onValueChange = { igraQuery.value = it },
             label = { Text("Igra") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
         Button(
             onClick = {
-                rezultatiIskanja.value = igre.filter { igra ->
-                    igra.lowercase().contains(igraQuery.value.lowercase(), ignoreCase = true)
-                }
+                appViewModel.searchGames(igraQuery.value)
             },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
         ) {
             Text("Išči")
         }
@@ -50,14 +50,13 @@ fun IskanjeScreen(navController: NavHostController) {
         if (rezultatiIskanja.value.isEmpty()) {
             Text("0 najdenih iger", modifier = Modifier.padding(top = 16.dp))
         } else {
-            rezultatiIskanja.value.forEach { game ->
+            rezultatiIskanja.value.forEach { igra ->
                 Text(
-                    text = game,
+                    text = igra.igra,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clickable {
-                            val gameId = igre.indexOf(game) + 1
-                            navController.navigate("detajli/$gameId")
+                            navController.navigate("detajli/${igra.id}")
                         }
                 )
             }

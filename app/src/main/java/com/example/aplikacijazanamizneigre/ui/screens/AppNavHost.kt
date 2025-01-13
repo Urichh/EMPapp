@@ -34,7 +34,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
             composable("iskanje") {
-                IskanjeScreen(navController = navController)
+                IskanjeScreen(navController = navController, appViewModel = appViewModel)
             }
             composable("seznamZelja") {
                 SeznamZeljaScreen()
