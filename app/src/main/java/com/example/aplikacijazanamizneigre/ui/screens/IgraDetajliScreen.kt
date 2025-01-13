@@ -1,9 +1,12 @@
 package com.example.aplikacijazanamizneigre.ui.screens
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -74,12 +77,18 @@ fun IgraDetajliScreen(igra: NamiznaIgra) {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Trgovine z igrami v radiusu 5km:")
             bliznjeTrgovine.forEach { trgovina ->
-                Text("${trgovina.name}; Koordinate: (${trgovina.lat}, ${trgovina.lon})")
+                Text(
+                    text = "${trgovina.name}; Koordinate: (${trgovina.lat}, ${trgovina.lon})",
+                    modifier = Modifier.clickable {
+                        odpriVGmaps(context, trgovina.lat, trgovina.lon)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
-        }
-        else {
+        } else {
             Log.d("Trgovine", "0 najdenih bližnjih trgovin")
         }
+
     }
 }
 
@@ -157,3 +166,16 @@ data class Store(
     val lat: String,
     val lon: String
 )
+
+private fun odpriVGmaps(context: android.content.Context, lat: String, lon: String) {
+    val uri = "geo:$lat,$lon"
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+    intent.setPackage("com.google.android.apps.maps")
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
+    else {
+        Log.e("Maps", "Google Maps ni nameščen")
+    }
+}
+
