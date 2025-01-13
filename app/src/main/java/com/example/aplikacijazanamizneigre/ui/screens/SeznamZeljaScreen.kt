@@ -7,11 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.aplikacijazanamizneigre.ui.components.GumbNazaj
 import com.example.aplikacijazanamizneigre.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SeznamZeljaScreen(appViewModel: AppViewModel = viewModel()) {
+fun SeznamZeljaScreen(navController: NavHostController, appViewModel: AppViewModel = viewModel()) {
     val seznamIger by appViewModel.vseIgre.collectAsStateWithLifecycle(initialValue = emptyList())
     val seznamZelijZImenom by appViewModel.zeljeneIgreZImenom.collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -23,7 +25,8 @@ fun SeznamZeljaScreen(appViewModel: AppViewModel = viewModel()) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Seznam želja", style = MaterialTheme.typography.bodyMedium)
+        //Text(text = "Seznam želja", style = MaterialTheme.typography.bodyMedium)
+        GumbNazaj(navController = navController, title = "Seznam želja")
 
         Spacer(modifier = Modifier.height(16.dp))
 

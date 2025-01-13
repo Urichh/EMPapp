@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.aplikacijazanamizneigre.ui.components.DropdownMenuZNapisom
+import com.example.aplikacijazanamizneigre.ui.components.GumbNazaj
 
 @Composable
 fun PriporocilaScreen(
@@ -41,6 +42,8 @@ fun PriporocilaScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
+        GumbNazaj(navController = navController, title = "Priporočila")
+
         DropdownMenuZNapisom(
             label = "Žanr",
             options = zanri,

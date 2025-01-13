@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.aplikacijazanamizneigre.ui.components.GumbNazaj
 import com.example.aplikacijazanamizneigre.viewmodel.AppViewModel
 
 @Composable
@@ -27,6 +28,8 @@ fun IskanjeScreen(navController: NavHostController, appViewModel: AppViewModel) 
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
+        GumbNazaj(navController = navController, title = "Iskanje")
+
         TextField(
             value = igraQuery.value,
             onValueChange = { igraQuery.value = it },

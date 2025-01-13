@@ -18,8 +18,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavHostController
 import coil3.compose.rememberAsyncImagePainter
 import com.example.aplikacijazanamizneigre.data.models.NamiznaIgra
+import com.example.aplikacijazanamizneigre.ui.components.GumbNazaj
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -33,7 +35,7 @@ import okhttp3.Callback
 import java.io.IOException
 
 @Composable
-fun IgraDetajliScreen(igra: NamiznaIgra) {
+fun IgraDetajliScreen(navController: NavHostController, igra: NamiznaIgra) {
     val scrollState = rememberScrollState()
     var bliznjeTrgovine by remember { mutableStateOf<List<Store>>(emptyList()) }
     val context = LocalContext.current
@@ -56,6 +58,8 @@ fun IgraDetajliScreen(igra: NamiznaIgra) {
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        GumbNazaj(navController = navController, title = "Priporočila")
+
         val painter = rememberAsyncImagePainter(igra.slikaURL)
         Image(
             painter = painter,

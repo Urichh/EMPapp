@@ -37,7 +37,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 IskanjeScreen(navController = navController, appViewModel = appViewModel)
             }
             composable("seznamZelja") {
-                SeznamZeljaScreen()
+                SeznamZeljaScreen(navController = navController)
             }
             composable("priporocila") {
                 PriporocilaScreen(appViewModel = appViewModel, navController = navController)
@@ -53,7 +53,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 }
 
                 igraa?.let { gameDetails ->
-                    IgraDetajliScreen(igra = gameDetails)
+                    IgraDetajliScreen(navController = navController, igra = gameDetails)
                 }
             }
         }
